@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chez Salim - Restaurant & Cuisine Rapide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; overflow-x: hidden; }
+        .navbar {
+            position: fixed; top: 0; width: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .nav-container {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center; padding: 0 2rem;
+        }
+        .logo {
+            font-size: 1.8rem; font-weight: bold; color: #ff6b35; text-decoration: none;
+        }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; }
+        .nav-menu a { color: white; text-decoration: none; transition: color 0.3s ease; font-weight: 500; }
+        .nav-menu a:hover { color: #ff6b35; }
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex; align-items: center; justify-content: center; text-align: center; color: white;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; width: 200%; height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; padding: 0 2rem; }
+        .hero h1 {
+            font-size: 4rem; margin-bottom: 1rem; font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideUp 1s ease-out;
+        }
+        .hero p {
+            font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.9;
+            animation: slideUp 1s ease-out 0.3s both;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #ff6b35; color: white; padding: 1rem 2rem;
+            border-radius: 50px; text-decoration: none; font-weight: bold;
+            transition: all 0.3s ease; animation: slideUp 1s ease-out 0.6s both;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+        .cta-button:hover { background: #e55a2b; transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section { padding: 5rem 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .section-title {
+            text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #333; position: relative;
+        }
+        .section-title::after {
+            content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            width: 80px; height: 4px; background: #ff6b35; border-radius: 2px;
+        }
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;
+        }
+        .menu-item {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease; position: relative;
+        }
+        .menu-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+        .menu-item-image {
+            height: 200px;
+            background: linear-gradient(45deg, #ff6b35, #ffa726);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; color: white; position: relative; overflow: hidden;
+        }
+        .menu-item-image::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } }
+        .menu-item-content { padding: 1.5rem; }
+        .menu-item h3 { font-size: 1.3rem; margin-bottom: 0.5rem; color: #333; }
+        .menu-item p { color: #666; margin-bottom: 1rem; font-size: 0.9rem; }
+        .price { font-size: 1.2rem; font-weight: bold; color: #ff6b35; }
+        .offers { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; }
+        .offers-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem; margin-top: 2rem;
+        }
+        .offer-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); border-radius: 20px;
+            padding: 2rem; border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        .offer-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.15); }
+        .offer-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .offer-card h3 { font-size: 1.3rem; margin-bottom: 1rem; }
+        .contact { background: #f8f9fa; }
+        .contact-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem; margin-top: 2rem;
+        }
+        .contact-info {
+            background: white; padding: 2rem; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .contact-item { display: flex; align-items: center; margin-bottom: 1.5rem; }
+        .contact-icon {
+            width: 50px; height: 50px; background: #ff6b35; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white; margin-right: 1rem; font-size: 1.2rem;
+        }
+        .contact-details h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: #333; }
+        .contact-details p { color: #666; font-size: 0.9rem; }
+        .footer { background: #333; color: white; text-align: center; padding: 2rem 0; }
+        .mobile-menu { display: none; flex-direction: column; cursor: pointer; }
+        .mobile-menu span { width: 25px; height: 3px; background: white; margin: 3px 0; transition: 0.3s; }
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .mobile-menu { display: flex; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .section-title { font-size: 2rem; }
+            .menu-grid { grid-template-columns: 1fr; }
+            .nav-container { padding: 0 1rem; }
+            .container { padding: 0 1rem; }
+        }
+        .fade-in {
+            opacity: 0; transform: translateY(30px); transition: all 0.6s ease;
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- Reservation Form Styles --- */
+        .reservation-section {
+            background: #f8f9fa;
+            padding: 5rem 0;
+        }
+
+        .reservation-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+            padding: 2.5rem 2rem;
+        }
+
+        .reservation-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .reservation-title::after {
+            content: '';
+            display: block;
+            margin: 0.5rem auto 0 auto;
+            width: 60px;
+            height: 4px;
+            background: #ff6b35;
+            border-radius: 2px;
+        }
+
+        .reservation-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .reservation-form label {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            color: #444;
+        }
+
+        .reservation-form input, .reservation-form select, .reservation-form textarea {
+            padding: 0.7rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        .reservation-form textarea {
+            resize: vertical;
+            min-height: 50px;
+            max-height: 120px;
+        }
+
+        .reservation-form button {
+            background: #ff6b35;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            padding: 0.9rem;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            transition: background 0.2s;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.12);
+        }
+        .reservation-form button:hover {
+            background: #e55a2b;
+        }
+
+        .reservation-confirm {
+            text-align: center;
+            color: #28a745;
+            font-size: 1.15rem;
+            margin-top: 1.2rem;
+            font-weight: 500;
+        }
+        .reservation-error {
+            text-align: center;
+            color: #d73a49;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .reservation-container {
+                padding: 1.5rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Chez Salim</a>
+            <ul class="nav-menu">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#offres">Offres</a></li>
+                <li><a href="#reservation">Réservation</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="hero">
+        <div class="hero-content">
+            <h1>Bienvenue Chez Salim</h1>
+            <p>Découvrez une cuisine authentique et moderne dans une atmosphère chaleureuse. Des plats traditionnels revisités avec passion et créativité.</p>
+            <a href="#menu" class="cta-button">Découvrir notre menu</a>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="section">
+        <div class="container">
+            <h2 class="section-title fade-in">Notre Menu</h2>
+            <div class="menu-grid">
+                <div class="menu-item fade-in">
+                    <div class="menu-item-image">🍟</div>
+                    <div class="menu-item-content">
+                        <h3>Fish & Chips</h3>
+                        <p>Poisson frais pané accompagné de frites dorées et sauce tartare maison</p>
+                        <div class="price">14,90€</div>
+                    </div>
+                </div>
+                <div class="menu-item fade-in">
+                    <div class="menu-item-image">🍕</div>
+                    <div class="menu-item-content">
+                        <h3>Pizza Margherita</h3>
+                        <p>Base tomate, mozzarella di bufala, basilic frais et huile d'olive extra vierge</p>
+                        <div class="price">12,50€</div>
+                    </div>
+                </div>
+                <div class="menu-item fade-in">
+                    <div class="menu-item-image">🥗</div>
+                    <div class="menu-item-content">
+                        <h3>Salade Fraîche</h3>
+                        <p>Mélange de saisons, avocat, tomates cerises, vinaigrette balsamique</p>
+                        <div class="price">9,90€</div>
+                    </div>
+                </div>
+                <div class="menu-item fade-in">
+                    <div class="menu-item-image">🍔</div>
+                    <div class="menu-item-content">
+                        <h3>Burger Gourmand</h3>
+                        <p>Steak haché 180g, cheddar, bacon croustillant, oignons caramélisés</p>
+                        <div class="price">16,90€</div>
+                    </div>
+                </div>
+                <div class="menu-item fade-in">
+                    <div class="menu-item-image">🍝</div>
+                    <div class="menu-item-content">
+                        <h3>Pâtes Carbonara</h3>
+                        <p>Spaghettis, lardons fumés, parmesan, jaune d'œuf, crème fraîche</p>
+                        <div class="price">13,50€</div>
+                    </div>
+                </div>
+                <div class="menu-item fade-in">
+                    <div class="menu-item-image">🌮</div>
+                    <div class="menu-item-content">
+                        <h3>Tacos Mexicain</h3>
+                        <p>Tortilla, poulet épicé, guacamole, salsa, fromage fondu</p>
+                        <div class="price">11,90€</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation Section -->
+    <section id="reservation" class="reservation-section">
+        <div class="reservation-container">
+            <h2 class="reservation-title">Réservez une table</h2>
+            <form class="reservation-form" id="reservationForm" autocomplete="off">
+                <div>
+                    <label for="name">Nom et Prénom *</label>
+                    <input type="text" id="name" name="name" required placeholder="Votre nom complet">
+                </div>
+                <div>
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="exemple@mail.com">
+                </div>
+                <div>
+                    <label for="phone">Téléphone *</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="06XXXXXXXX">
+                </div>
+                <div>
+                    <label for="date">Date *</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <div>
+                    <label for="people">Nombre de personnes *</label>
+                    <select id="people" name="people" required>
+                        <option value="" disabled selected>Nombre</option>
+                        <option value="1">1 personne</option>
+                        <option value="2">2 personnes</option>
+                        <option value="3">3 personnes</option>
+                        <option value="4">4 personnes</option>
+                        <option value="5">5 personnes</option>
+                        <option value="6">6 personnes</option>
+                        <option value="7">7 personnes</option>
+                        <option value="8">8 personnes</option>
+                        <option value="9">9 personnes</option>
+                        <option value="10">10 personnes</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="message">Message (optionnel)</label>
+                    <textarea id="message" name="message" placeholder="Ex : anniversaire, allergies, préférences de table..."></textarea>
+                </div>
+                <button type="submit">Réserver maintenant</button>
+                <div class="reservation-confirm" id="reservationConfirm" style="display:none;">
+                    Merci ! Votre demande de réservation a été envoyée.<br>Nous vous contacterons pour confirmer.
+                </div>
+                <div class="reservation-error" id="reservationError" style="display:none;">
+                    Une erreur est survenue. Veuillez réessayer.
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Offers Section -->
+    <section id="offres" class="section offers">
+        <div class="container">
+            <h2 class="section-title fade-in">Offres Spéciales</h2>
+            <div class="offers-grid">
+                <div class="offer-card fade-in">
+                    <div class="offer-icon">🎉</div>
+                    <h3>Menu Midi</h3>
+                    <p>Plat + Boisson + Dessert<br><strong>Seulement 15,90€</strong></p>
+                </div>
+                <div class="offer-card fade-in">
+                    <div class="offer-icon">👥</div>
+                    <h3>Famille</h3>
+                    <p>2 Burgers + 2 Frites + 2 Boissons<br><strong>29,90€ au lieu de 35,90€</strong></p>
+                </div>
+                <div class="offer-card fade-in">
+                    <div class="offer-icon">⚡</div>
+                    <h3>Happy Hour</h3>
+                    <p>-20% sur toutes les boissons<br><strong>De 17h à 19h</strong></p>
+                </div>
+                <div class="offer-card fade-in">
+                    <div class="offer-icon">📱</div>
+                    <h3>Commande en ligne</h3>
+                    <p>Livraison gratuite<br><strong>Commande > 25€</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
+        <div class="container">
+            <h2 class="section-title fade-in">Nous Contacter</h2>
+            <div class="contact-grid">
+                <div class="contact-info fade-in">
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-details">
+                            <h4>Adresse</h4>
+                            <p>123 Avenue de la Gastronomie<br>75001 Paris, France</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-details">
+                            <h4>Téléphone</h4>
+                            <p>+33 1 23 45 67 89<br>Ouvert 7j/7 de 11h à 23h</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <div class="contact-details">
+                            <h4>Email</h4>
+                            <p>contact@chezsalim.fr<br>reservation@chezsalim.fr</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-info fade-in">
+                    <h3 style="margin-bottom: 1rem; color: #333;">Horaires d'ouverture</h3>
+                    <div style="color: #666; line-height: 2;">
+                        <p><strong>Lundi - Jeudi:</strong> 11h00 - 22h00</p>
+                        <p><strong>Vendredi - Samedi:</strong> 11h00 - 23h00</p>
+                        <p><strong>Dimanche:</strong> 12h00 - 21h00</p>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <h4 style="color: #333; margin-bottom: 1rem;">Suivez-nous</h4>
+                        <div style="display: flex; gap: 1rem;">
+                            <div style="width: 40px; height: 40px; background: #3b5998; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer;">f</div>
+                            <div style="width: 40px; height: 40px; background: #1da1f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer;">t</div>
+                            <div style="width: 40px; height: 40px; background: #e4405f; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer;">📷</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Chez Salim. Tous droits réservés. | Un template professionnel pour restaurateurs</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(0, 0, 0, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+
+        mobileMenu.addEventListener('click', () => {
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Gestion du formulaire de réservation
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Saisie des valeurs
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const date = document.getElementById('date').value;
+            const people = document.getElementById('people').value;
+            const message = document.getElementById('message').value.trim();
+
+            // Validation simple
+            if(!name || !email || !phone || !date || !people) {
+                document.getElementById('reservationError').innerText = "Merci de remplir tous les champs obligatoires.";
+                document.getElementById('reservationError').style.display = "block";
+                document.getElementById('reservationConfirm').style.display = "none";
+                return;
+            }
+
+            // Simuler l'envoi (peut être remplacé par un appel AJAX)
+            setTimeout(() => {
+                document.getElementById('reservationError').style.display = "none";
+                document.getElementById('reservationConfirm').style.display = "block";
+                // Réinitialiser le formulaire
+                document.getElementById('reservationForm').reset();
+            }, 600);
+        });
+
+        // Date min aujourd'hui pour le champ date (JS pour compatibilité)
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').setAttribute('min', today);
+        });
+    </script>
+</body>
+</html>
